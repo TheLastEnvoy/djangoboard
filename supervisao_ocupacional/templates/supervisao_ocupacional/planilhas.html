@@ -1,0 +1,98 @@
+{% extends 'supervisao_ocupacional/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<!-- CSS personalizado para planilhas -->
+<link rel="stylesheet" href="{% static 'supervisao_ocupacional/css/planilhas.css' %}">
+{% endblock %}
+
+{% block sidebar %}
+<div class="filtros-sidebar">
+    <h4>Filtros</h4>
+    <form method="get">
+        <!-- Filtros específicos para planilhas -->
+        <div class="mb-3">
+            <label for="periodo" class="form-label">Período</label>
+            <select class="form-select" id="periodo" name="periodo">
+                <option value="">Todos</option>
+                <option value="Mensal">Mensal</option>
+                <option value="Trimestral">Trimestral</option>
+                <option value="Anual">Anual</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="municipio" class="form-label">Município</label>
+            <select class="form-select" id="municipio" name="municipio">
+                {% for municipio in municipios %}
+                <option value="{{ municipio }}" {% if municipio == municipio_filtro %}selected{% endif %}>{{ municipio }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="planilhas-container">
+    <!-- Estatísticas -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-label">Total de Planilhas</div>
+            <div class="stat-value">{{ total_planilhas }}</div>
+        </div>
+        <!-- Adicione mais cards de estatísticas conforme necessário -->
+    </div>
+
+    <!-- Card principal -->
+    <div class="card planilhas-card">
+        <div class="card-header">
+            <h2>{{ title }}</h2>
+        </div>
+        <div class="card-body">
+            {% if municipio_chart %}
+            <!-- Gráfico de distribuição por município -->
+            <div class="chart-container">
+                <h3 class="chart-title">Distribuição por Município</h3>
+                <div id="municipio-chart"></div>
+            </div>
+            {% endif %}
+
+            <!-- Tabela de planilhas -->
+            {% if planilhas %}
+            <table class="planilhas-table">
+                <thead>
+                    <tr>
+                        {% for key in planilhas.0.keys %}
+                        <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for planilha in planilhas %}
+                    <tr>
+                        {% for value in planilha.values %}
+                        <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>Nenhuma planilha encontrada com os filtros selecionados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if municipio_chart %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var chartData = {{ municipio_chart|safe }};
+        Plotly.newPlot('municipio-chart', chartData.data, chartData.layout);
+    });
+</script>
+{% endif %}
+{% endblock %}

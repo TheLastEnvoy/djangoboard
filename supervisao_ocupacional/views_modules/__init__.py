@@ -1,0 +1,7 @@
+# supervisao_ocupacional/views_modules/__init__.py
+from supervisao_ocupacional.views_modules.base_views import remove_special_chars, load_data, index
+from supervisao_ocupacional.views_modules.laudos_views import laudos
+from supervisao_ocupacional.views_modules.documentospgt_views import documentospgt  # Nome atualizado
+from supervisao_ocupacional.views_modules.docs_recebidos_views import docs_recebidos
+from supervisao_ocupacional.views_modules.pareceres_views import pareceres
+from supervisao_ocupacional.views_modules.planilhas_views import planilhas

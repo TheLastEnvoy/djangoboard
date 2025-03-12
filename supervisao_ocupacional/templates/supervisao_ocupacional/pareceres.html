@@ -1,0 +1,181 @@
+{% extends 'supervisao_ocupacional/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<!-- Incluir Plotly.js -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!-- CSS personalizado para pareceres -->
+<link rel="stylesheet" href="{% static 'supervisao_ocupacional/css/pareceres.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+{% if error_message %}
+<div class="alert alert-danger">
+    {{ error_message }}
+</div>
+{% else %}
+
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Filtros</h2>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{% url 'supervisao_ocupacional:pareceres' %}">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="municipio">Município:</label>
+                        <select name="municipio" id="municipio" class="form-control">
+                            {% for municipio in municipios %}
+                            <option value="{{ municipio }}" {% if municipio == municipio_filtro %}selected{% endif %}>{{ municipio }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="assentamento">Assentamento:</label>
+                        <select name="assentamento" id="assentamento" class="form-control">
+                            {% for assentamento in assentamentos %}
+                            <option value="{{ assentamento }}" {% if assentamento == assentamento_filtro %}selected{% endif %}>{{ assentamento }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="tipo">Tipo:</label>
+                        <select name="tipo" id="tipo" class="form-control">
+                            {% for tipo in tipos %}
+                            <option value="{{ tipo }}" {% if tipo == tipo_filtro %}selected{% endif %}>{{ tipo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
+        </form>
+    </div>
+</div>
+
+<!-- Métricas -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Métricas</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Pareceres de beneficiário</div>
+                    <div class="card-body">
+                        <h3>{{ padrao_total }} de {{ total_padrao }}</h3>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ percentual_padrao }}%;" 
+                                 aria-valuenow="{{ percentual_padrao }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ percentual_padrao }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Pareceres para desbloqueio</div>
+                    <div class="card-body">
+                        <h3>{{ desbloqueio_total }} de {{ total_desbloqueio }}</h3>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: {{ percentual_desbloqueio }}%;" 
+                                 aria-valuenow="{{ percentual_desbloqueio }}" aria-valuemin="0" aria-valuemax="100">
+                                {{ percentual_desbloqueio }}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h2>Gráficos</h2>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% if tipo_chart_div %}
+            <div class="col-md-4">
+                <div class="chart-container">
+                    {{ tipo_chart_div|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if assentamento_chart_div %}
+            <div class="col-md-4">
+                <div class="chart-container">
+                    {{ assentamento_chart_div|safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if municipio_chart_div %}
+            <div class="col-md-4">
+                <div class="chart-container">
+                    {{ municipio_chart_div|safe }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Pareceres -->
+<div class="card">
+    <div class="card-header">
+        <h2>Relação de Pareceres ({{ total_pareceres }})</h2>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Lote</th>
+                        <th>Assentamento</th>
+                        <th>Município</th>
+                        <th>Código SIPRA</th>
+                        <th>Tipo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for parecer in pareceres %}
+                    <tr>
+                        <td>{{ parecer.Lote }}</td>
+                        <td>{{ parecer.Assentamento }}</td>
+                        <td>{{ parecer.Município }}</td>
+                        <td>{{ parecer.Código_SIPRA }}</td>
+                        <td>{{ parecer.Tipo }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhum parecer encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Adicione qualquer JavaScript adicional aqui
+</script>
+{% endblock %}

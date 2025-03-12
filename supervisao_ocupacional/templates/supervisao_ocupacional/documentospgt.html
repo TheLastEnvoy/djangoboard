@@ -1,0 +1,356 @@
+{% extends 'supervisao_ocupacional/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mt-4 mb-4">{{ title }}</h1>
+
+    {% if error_message %}
+    <div class="alert alert-warning">
+        {{ error_message }}
+    </div>
+    {% else %}
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-filter"></i> Filtros
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-2">
+                    <label for="tipo_documentopgt" class="form-label">Tipo de Documento</label>
+                    <select name="tipo_documentopgt" id="tipo_documentopgt" class="form-select">
+                        {% for tipo in tipos_documentopgt %}
+                        <option value="{{ tipo }}" {% if tipo == tipo_documentopgt_filtro %}selected{% endif %}>{{ tipo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="assentamento" class="form-label">Assentamento</label>
+                    <select name="assentamento" id="assentamento" class="form-select">
+                        {% for assentamento in assentamentos %}
+                        <option value="{{ assentamento }}" {% if assentamento == assentamento_filtro %}selected{% endif %}>{{ assentamento }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="municipio" class="form-label">Município</label>
+                    <select name="municipio" id="municipio" class="form-select">
+                        {% for municipio in municipios %}
+                        <option value="{{ municipio }}" {% if municipio == municipio_filtro %}selected{% endif %}>{{ municipio }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="nome_t1" class="form-label">Nome T1</label>
+                    <select name="nome_t1" id="nome_t1" class="form-select">
+                        {% for nome_t1 in nomes_t1 %}
+                        <option value="{{ nome_t1 }}" {% if nome_t1 == nome_t1_filtro %}selected{% endif %}>{{ nome_t1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="objetivo" class="form-label">Objetivo</label>
+                    <select name="objetivo" id="objetivo" class="form-select">
+                        {% for objetivo in objetivos %}
+                        <option value="{{ objetivo }}" {% if objetivo == objetivo_filtro %}selected{% endif %}>{{ objetivo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+                    <a href="{% url 'supervisao_ocupacional:documentospgt' %}" class="btn btn-secondary">Limpar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resumo -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i> Resumo
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card text-white bg-primary mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Total de Documentos</h5>
+                                    <p class="card-text display-4">{{ total_documentospgt }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Tipos de Documento</h5>
+                                    <p class="card-text display-4">{{ tipos_documentopgt|length|add:"-1" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-info mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Assentamentos</h5>
+                                    <p class="card-text display-4">{{ assentamentos|length|add:"-1" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card text-white bg-warning mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Municípios</h5>
+                                    <p class="card-text display-4">{{ municipios|length|add:"-1" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progresso -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-tasks"></i> Progresso
+                </div>
+                <div class="card-body">
+                    <h6>Relatório de conformidades para regularização</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" role="progressbar" style="width: {{ percentual_relatorios_conf }}%;" 
+                             aria-valuenow="{{ percentual_relatorios_conf }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ percentual_relatorios_conf|floatformat:1 }}%
+                        </div>
+                    </div>
+                    <p class="text-muted">{{ relatorios_conf_atual }} de {{ total_relatorios_conf }} documentos</p>
+
+                    <h6>Solicitação de documentação complementar</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-info" role="progressbar" style="width: {{ percentual_solicitacoes }}%;" 
+                             aria-valuenow="{{ percentual_solicitacoes }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ percentual_solicitacoes|floatformat:1 }}%
+                        </div>
+                    </div>
+                    <p class="text-muted">{{ solicitacoes_atual }} de {{ total_solicitacoes }} documentos</p>
+
+                    <h6>Segundos relatórios de conformidades para regularização</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ percentual_segundos_relatorios }}%;" 
+                             aria-valuenow="{{ percentual_segundos_relatorios }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ percentual_segundos_relatorios|floatformat:1 }}%
+                        </div>
+                    </div>
+                    <p class="text-muted">{{ segundos_relatorios_atual }} de {{ total_segundos_relatorios }} documentos</p>
+
+                    <h6>Análise para regularização</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" role="progressbar" style="width: {{ percentual_analise_reg }}%;" 
+                             aria-valuenow="{{ percentual_analise_reg }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ percentual_analise_reg|floatformat:1 }}%
+                        </div>
+                    </div>
+                    <p class="text-muted">{{ analise_reg_atual }} de {{ total_analise_reg }} documentos</p>
+
+                    <!-- Nova seção para Relatório de conformidades para titulação -->
+                    <h6>Relatório de conformidades para titulação</h6>
+                    <div class="progress mb-2">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ percentual_titulacao }}%;" 
+                             aria-valuenow="{{ percentual_titulacao }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ percentual_titulacao|floatformat:1 }}%
+                        </div>
+                    </div>
+                    <p class="text-muted">{{ titulacao_atual }} documentos (meta: 200)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i> Tipo de Documento
+                </div>
+                <div class="card-body">
+                    <div id="tipo_documentopgt_chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> Município
+                </div>
+                <div class="card-body">
+                    <div id="municipio_chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> Assentamento
+                </div>
+                <div class="card-body">
+                    <div id="assentamento_chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        {% if objetivo_chart %}
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie"></i> Objetivo
+                </div>
+                <div class="card-body">
+                    <div id="objetivo_chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Tabela de Tipo de Documento por Assentamento -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table"></i> Tipo de Documento por Assentamento
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="tipo_assentamento_table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tipo de documento PGT</th>
+                            <th>Assentamento</th>
+                            <th>Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in tipo_assentamento_list %}
+                        <tr>
+                            <td>{{ item.Tipo_de_documento_PGT }}</td>
+                            <td>{{ item.Assentamento }}</td>
+                            <td>{{ item.Quantidade }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabela de Documentos -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table"></i> Documentos
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="documentos_table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tipo de documento PGT</th>
+                            <th>Município</th>
+                            <th>Assentamento</th>
+                            <th>Nome T1</th>
+                            <th>Objetivo</th>
+                            <th>Código SIPRA</th>
+                            <th>Autenticador</th>
+                            <th>Segundo Relatório</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documentospgt %}
+                        <tr>
+                            <td>{{ doc.Tipo_de_documento_PGT }}</td>
+                            <td>{{ doc.Município }}</td>
+                            <td>{{ doc.Assentamento }}</td>
+                            <td>{{ doc.Nome_T1 }}</td>
+                            <td>{{ doc.Objetivo }}</td>
+                            <td>{{ doc.Código_SIPRA }}</td>
+                            <td>{{ doc.Autenticador }}</td>
+                            <td>{{ doc.Segundo_Relatório }}</td>
+                            <td>{{ doc.Data }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar DataTables
+        $('#documentos_table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
+            },
+            order: [[8, 'desc']], // Ordenar por data (índice 8) decrescente
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]]
+        });
+
+        $('#tipo_assentamento_table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/pt-BR.json'
+            },
+            order: [[2, 'desc']], // Ordenar por quantidade (índice 2) decrescente
+            pageLength: 10,
+            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]]
+        });
+
+        // Renderizar gráficos
+        var tipo_documentopgt_chart = JSON.parse('{{ tipo_documentopgt_chart|safe }}');
+        Plotly.newPlot('tipo_documentopgt_chart', tipo_documentopgt_chart.data, tipo_documentopgt_chart.layout);
+
+        var municipio_chart = JSON.parse('{{ municipio_chart|safe }}');
+        Plotly.newPlot('municipio_chart', municipio_chart.data, municipio_chart.layout);
+
+        var assentamento_chart = JSON.parse('{{ assentamento_chart|safe }}');
+        Plotly.newPlot('assentamento_chart', assentamento_chart.data, assentamento_chart.layout);
+
+        {% if objetivo_chart %}
+        var objetivo_chart = JSON.parse('{{ objetivo_chart|safe }}');
+        Plotly.newPlot('objetivo_chart', objetivo_chart.data, objetivo_chart.layout);
+        {% endif %}
+
+        // Ajustar tamanho dos gráficos quando a janela for redimensionada
+        window.addEventListener('resize', function() {
+            Plotly.relayout('tipo_documentopgt_chart', {
+                'width': document.getElementById('tipo_documentopgt_chart').offsetWidth
+            });
+            Plotly.relayout('municipio_chart', {
+                'width': document.getElementById('municipio_chart').offsetWidth
+            });
+            Plotly.relayout('assentamento_chart', {
+                'width': document.getElementById('assentamento_chart').offsetWidth
+            });
+            {% if objetivo_chart %}
+            Plotly.relayout('objetivo_chart', {
+                'width': document.getElementById('objetivo_chart').offsetWidth
+            });
+            {% endif %}
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

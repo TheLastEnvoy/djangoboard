@@ -1,0 +1,69 @@
+{% extends 'supervisao_ocupacional/base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Dashboard Supervisão Ocupacional - TED INCRA/UFPR</h2>
+    </div>
+    <div class="card-body">
+        <p>Bem-vindo ao Dashboard de Supervisão Ocupacional. Selecione uma das abas acima para visualizar os dados específicos.</p>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">Resumo</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Laudos</h5>
+                                        <p class="card-text display-4">{{ total_laudos }}</p>
+                                        <a href="{% url 'supervisao_ocupacional:laudos' %}" class="text-white">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Documentação PGT</h5>
+                                        <p class="card-text display-4">{{ total_documentospgt }}</p>
+                                        <a href="{% url 'supervisao_ocupacional:documentospgt' %}" class="text-white">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Documentos Recebidos</h5>
+                                        <p class="card-text display-4">{{ total_docs_recebidos }}</p>
+                                        <a href="{% url 'supervisao_ocupacional:docs_recebidos' %}" class="text-white">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card bg-warning text-dark">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pareceres Conclusivos</h5>
+                                        <p class="card-text display-4">{{ total_pareceres }}</p>
+                                        <a href="{% url 'supervisao_ocupacional:pareceres' %}" class="text-dark">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Planilhas Monitoramento</h5>
+                                        <p class="card-text display-4">{{ total_planilhas }}</p>
+                                        <a href="{% url 'supervisao_ocupacional:planilhas' %}" class="text-white">Ver detalhes</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

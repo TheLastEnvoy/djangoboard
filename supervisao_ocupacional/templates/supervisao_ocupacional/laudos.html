@@ -1,0 +1,371 @@
+{% extends 'supervisao_ocupacional/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mt-4 mb-4">{{ title }}</h1>
+
+    <!-- Cards de resumo -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total de Laudos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_laudos }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Vistorias Realizadas</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ vistoria_count }}</div>
+                            <div class="text-xs text-gray-600">Meta: {{ meta_vistoria }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-search fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Mutirões Realizados</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ mutirao_count }}</div>
+                            <div class="text-xs text-gray-600">Meta: {{ meta_mutirao }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Municípios Atendidos</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ municipios|length|add:"-1" }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos de progresso -->
+    <div class="row mb-4">
+        {% if progresso_vistoria_chart %}
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Progresso de Vistorias</h6>
+                </div>
+                <div class="card-body">
+                    <div id="progresso-vistoria-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if progresso_mutirao_chart %}
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Progresso de Mutirões</h6>
+                </div>
+                <div class="card-body">
+                    <div id="progresso-mutirao-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row">
+                <div class="col-md-2 mb-3">
+                    <label for="municipio">Município:</label>
+                    <select name="municipio" id="municipio" class="form-control">
+                        {% for municipio in municipios %}
+                        <option value="{{ municipio }}" {% if municipio == municipio_filtro %}selected{% endif %}>
+                            {{ municipio }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="assentamento">Assentamento:</label>
+                    <select name="assentamento" id="assentamento" class="form-control">
+                        {% for assentamento in assentamentos %}
+                        <option value="{{ assentamento }}" {% if assentamento == assentamento_filtro %}selected{% endif %}>
+                            {{ assentamento }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="tipo_laudo">Tipo de Laudo:</label>
+                    <select name="tipo_laudo" id="tipo_laudo" class="form-control">
+                        {% for tipo in tipos_de_laudo %}
+                        <option value="{{ tipo }}" {% if tipo == tipo_laudo_filtro %}selected{% endif %}>
+                            {{ tipo }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="tecnico">Técnico:</label>
+                    <select name="tecnico" id="tecnico" class="form-control">
+                        {% for tecnico in tecnicos %}
+                        <option value="{{ tecnico }}" {% if tecnico == tecnico_filtro %}selected{% endif %}>
+                            {{ tecnico }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 mb-3">
+                    <label for="modalidade">Modalidade:</label>
+                    <select name="modalidade" id="modalidade" class="form-control">
+                        {% for modalidade in modalidades %}
+                        <option value="{{ modalidade }}" {% if modalidade == modalidade_filtro %}selected{% endif %}>
+                            {{ modalidade }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                    <a href="{% url 'supervisao_ocupacional:laudos' %}" class="btn btn-secondary">Limpar Filtros</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gráficos de distribuição -->
+    <div class="row">
+        {% if municipio_chart %}
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Distribuição por Município</h6>
+                </div>
+                <div class="card-body">
+                    <div id="municipio-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if tipo_laudo_chart %}
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Distribuição por Tipo de Laudo</h6>
+                </div>
+                <div class="card-body">
+                    <div id="tipo-laudo-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% if tecnico_chart %}
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Laudos por Técnico</h6>
+                </div>
+                <div class="card-body">
+                    <div id="tecnico-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if modalidade_chart %}
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Laudos por Modalidade</h6>
+                </div>
+                <div class="card-body">
+                    <div id="modalidade-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Gráfico de tendência mensal -->
+    {% if mensal_chart %}
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Evolução Mensal de Laudos</h6>
+                </div>
+                <div class="card-body">
+                    <div id="mensal-chart" style="height: 400px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabela de Laudos -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Laudos</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Município</th>
+                            <th>Assentamento</th>
+                            <th>Lote</th>
+                            <th>Código SIPRA</th>
+                            <th>Tipo de Laudo</th>
+                            <th>Data</th>
+                            <th>Técnico</th>
+                            <th>Modalidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for laudo in laudos %}
+                        <tr>
+                            <td>{{ laudo.municipio }}</td>
+                            <td>{{ laudo.assentamento }}</td>
+                            <td>{{ laudo.lote }}</td>
+                            <td>{{ laudo.codigo_sipra }}</td>
+                            <td>{{ laudo.tipo_laudo }}</td>
+                            <td>{{ laudo.data_emissao|date:"d/m/Y" }}</td>
+                            <td>{{ laudo.tecnico }}</td>
+                            <td>{{ laudo.modalidade }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center">Nenhum laudo encontrado</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts para os gráficos -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if municipio_chart %}
+        var municipioChart = {{ municipio_chart|safe }};
+        Plotly.newPlot('municipio-chart', municipioChart.data, municipioChart.layout);
+        {% endif %}
+
+        {% if tipo_laudo_chart %}
+        var tipoLaudoChart = {{ tipo_laudo_chart|safe }};
+        Plotly.newPlot('tipo-laudo-chart', tipoLaudoChart.data, tipoLaudoChart.layout);
+        {% endif %}
+
+        {% if tecnico_chart %}
+        var tecnicoChart = {{ tecnico_chart|safe }};
+        Plotly.newPlot('tecnico-chart', tecnicoChart.data, tecnicoChart.layout);
+        {% endif %}
+
+        {% if modalidade_chart %}
+        var modalidadeChart = {{ modalidade_chart|safe }};
+        Plotly.newPlot('modalidade-chart', modalidadeChart.data, modalidadeChart.layout);
+        {% endif %}
+
+        {% if mensal_chart %}
+        var mensalChart = {{ mensal_chart|safe }};
+        Plotly.newPlot('mensal-chart', mensalChart.data, mensalChart.layout);
+        {% endif %}
+
+        {% if progresso_vistoria_chart %}
+        var progressoVistoriaChart = {{ progresso_vistoria_chart|safe }};
+        Plotly.newPlot('progresso-vistoria-chart', progressoVistoriaChart.data, progressoVistoriaChart.layout);
+        {% endif %}
+
+        {% if progresso_mutirao_chart %}
+        var progressoMutiraoChart = {{ progresso_mutirao_chart|safe }};
+        Plotly.newPlot('progresso-mutirao-chart', progressoMutiraoChart.data, progressoMutiraoChart.layout);
+        {% endif %}
+
+        // Inicializar DataTable para a tabela de laudos
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                },
+                "pageLength": 10,
+                "order": [[5, "desc"]] // Ordenar por data (coluna 5) decrescente
+            });
+        });
+    });
+</script>
+
+<!-- Script para responsividade dos gráficos -->
+<script>
+    window.addEventListener('resize', function() {
+        // Redimensionar todos os gráficos quando a janela for redimensionada
+        var charts = [
+            'municipio-chart', 
+            'tipo-laudo-chart', 
+            'tecnico-chart', 
+            'modalidade-chart', 
+            'mensal-chart',
+            'progresso-vistoria-chart',
+            'progresso-mutirao-chart'
+        ];
+
+        charts.forEach(function(chartId) {
+            var chart = document.getElementById(chartId);
+            if (chart) {
+                Plotly.relayout(chartId, {
+                    'width': chart.offsetWidth,
+                    'height': chart.offsetHeight
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

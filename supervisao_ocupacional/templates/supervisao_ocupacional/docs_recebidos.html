@@ -1,0 +1,192 @@
+{% extends 'supervisao_ocupacional/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<!-- CSS personalizado para documentos recebidos -->
+<link rel="stylesheet" href="{% static 'supervisao_ocupacional/css/docs_recebidos.css' %}">
+<!-- Font Awesome para ícones -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="docs-recebidos-container">
+    <h1 class="page-title">{{ title }}</h1>
+
+    <div class="row">
+        <!-- Sidebar com filtros -->
+        <div class="col-md-3">
+            <div class="filter-section">
+                <h5><i class="fas fa-filter"></i> Filtros</h5>
+                <form method="get" action="{% url 'supervisao_ocupacional:docs_recebidos' %}">
+                    <div class="mb-3">
+                        <label for="municipio" class="form-label">Município:</label>
+                        <select class="form-select" id="municipio" name="municipio">
+                            {% for municipio in municipios %}
+                            <option value="{{ municipio }}" {% if municipio == municipio_filtro %}selected{% endif %}>{{ municipio }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="data_inicio" class="form-label">Data Início:</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="data_fim" class="form-label">Data Fim:</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Aplicar Filtros
+                    </button>
+                    <a href="{% url 'supervisao_ocupacional:docs_recebidos' %}" class="btn btn-secondary w-100 mt-2">
+                        <i class="fas fa-undo"></i> Limpar Filtros
+                    </a>
+                </form>
+            </div>
+
+            <!-- Resumo dos dados -->
+            <div class="card resumo-card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Resumo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="icon-container">
+                        <i class="fas fa-file-alt"></i>
+                        <div>
+                            <div class="stat-value">{{ total_documentos }}</div>
+                            <div class="stat-label">Total de documentos</div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <p><strong>Filtros aplicados:</strong></p>
+                    <ul>
+                        <li>Município: {{ municipio_filtro }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo principal -->
+        <div class="col-md-9">
+            <!-- Gráficos -->
+            <div class="row">
+                {% if municipio_chart %}
+                <div class="col-md-6">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Distribuição por Município</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="municipio_chart" class="chart-container"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="col-md-6">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Documentos por Período</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if documentos %}
+                            <div id="periodo_chart" class="chart-container"></div>
+                            {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> Não há dados disponíveis para exibir este gráfico.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de documentos -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-table"></i> Relação de Documentos Recebidos</h5>
+                </div>
+                <div class="card-body">
+                    {% if documentos %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover" id="documentos-table">
+                            <thead>
+                                <tr>
+                                    {% if documentos.0 %}
+                                    {% for key in documentos.0.keys %}
+                                    <th>{{ key }}</th>
+                                    {% endfor %}
+                                    {% else %}
+                                    <th>ID</th>
+                                    <th>Município</th>
+                                    <th>Tipo</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for doc in documentos %}
+                                <tr>
+                                    {% for key, value in doc.items %}
+                                    <td>{{ value }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center">Nenhum documento encontrado com os filtros selecionados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Não há documentos disponíveis para exibição.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar DataTables para a tabela de documentos
+        if (document.getElementById('documentos-table')) {
+            $('#documentos-table').DataTable({
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Todos"]],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json'
+                },
+                responsive: true
+            });
+        }
+
+        // Renderizar gráfico de município se existir
+        {% if municipio_chart %}
+        var municipioData = JSON.parse('{{ municipio_chart|escapejs }}');
+        Plotly.newPlot('municipio_chart', municipioData.data, municipioData.layout, {responsive: true});
+        {% endif %}
+
+        // Ajustar gráficos quando a janela for redimensionada
+        window.addEventListener('resize', function() {
+            {% if municipio_chart %}
+            Plotly.relayout('municipio_chart', {autosize: true});
+            {% endif %}
+        });
+    });
+</script>
+{% endblock %}

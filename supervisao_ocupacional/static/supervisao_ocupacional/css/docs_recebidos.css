@@ -1,0 +1,369 @@
+/* docs_recebidos.css - CSS personalizado para o dashboard de documentos recebidos */
+
+/* Estilos gerais */
+.docs-recebidos-container {
+    padding: 20px 0;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: none;
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    padding: 16px 20px;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #3a7bd5 0%, #2b5876 100%) !important;
+    color: white;
+}
+
+.card-header h2, .card-header h5 {
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.card-header h5 {
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Título principal */
+.page-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #eaeaea;
+}
+
+/* Estilos para os filtros na sidebar */
+.filter-section {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    padding: 20px;
+}
+
+.filter-section h5 {
+    color: #2b5876;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.filter-section .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 6px;
+}
+
+.filter-section .form-control,
+.filter-section .form-select {
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    transition: border-color 0.2s;
+}
+
+.filter-section .form-control:focus,
+.filter-section .form-select:focus {
+    border-color: #3a7bd5;
+    box-shadow: 0 0 0 0.25rem rgba(58, 123, 213, 0.25);
+}
+
+.filter-section .btn {
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.filter-section .btn-primary {
+    background-color: #3a7bd5;
+    border-color: #3a7bd5;
+}
+
+.filter-section .btn-primary:hover {
+    background-color: #2b5876;
+    border-color: #2b5876;
+}
+
+.filter-section .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.filter-section .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #5a6268;
+}
+
+/* Resumo dos dados */
+.resumo-card {
+    background-color: #f8f9fa;
+    border-left: 4px solid #3a7bd5;
+}
+
+.resumo-card .card-body {
+    padding: 20px;
+}
+
+.resumo-card h5 {
+    color: #2b5876;
+    margin-bottom: 15px;
+}
+
+.resumo-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #3a7bd5;
+    margin-bottom: 5px;
+}
+
+.resumo-card .stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Estilos para os gráficos */
+.chart-container {
+    height: 400px;
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.chart-card {
+    height: 100%;
+}
+
+.chart-card .card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2b5876;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Estilos para as tabelas */
+.table-responsive {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    color: #2b5876;
+    font-weight: 600;
+    border-top: none;
+    padding: 12px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    border-top: 1px solid #e9ecef;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(58, 123, 213, 0.05);
+}
+
+/* Badges para status */
+.badge {
+    padding: 6px 10px;
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.badge-primary {
+    background-color: #3a7bd5;
+    color: white;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Alertas e mensagens */
+.alert {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Animações para elementos */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.card:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.card:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.card:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+/* Ícones e elementos visuais */
+.icon-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.icon-container i {
+    font-size: 1.5rem;
+    margin-right: 10px;
+    color: #3a7bd5;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .chart-container {
+        height: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 300px;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .resumo-card .stat-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* Estilos para datas e calendários */
+input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    cursor: pointer;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+.date-range-container {
+    display: flex;
+    gap: 10px;
+}
+
+.date-range-container .form-control {
+    flex: 1;
+}
+
+/* Estilos para o loading spinner */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #3a7bd5;
+}
